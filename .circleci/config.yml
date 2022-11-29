@@ -11,7 +11,9 @@ jobs:
       - run:
           name: npm version
           command: npm --version
-
+      - run:
+          name: current dir
+          command: pwd
 
 workflows:
   build_and_deploy:
