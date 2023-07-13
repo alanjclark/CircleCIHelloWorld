@@ -21,24 +21,19 @@ jobs:
             chmod 755 script.sh
             chmod 744 .
       - run:
-          name: Current dir
-          command: |
-            pwd
-            ls -al
+
+          name: Check top
+          command: top
+          background: true
       - run:
-          name: Run script
-          command: ./script.sh
-      - run:
-          name: fix perm and run
-          command: |
-            chmod 755 .
-            ./script.sh
+          name: Sleep
+          command: sleep 300
+
 
 workflows:
   build_and_deploy:
     jobs:
       - build:
-          name: build # << matrix.name >>
-          # matrix:
-          #   parameters:
-          #     name: ["1", "2", "3"]
+
+          name: my_build
+
