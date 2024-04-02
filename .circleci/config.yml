@@ -26,3 +26,6 @@ workflows:
   macos:
     jobs:
       - build
+          pre-steps:
+            - run:
+                command: rbenv global 3.2.2 
