@@ -20,7 +20,7 @@ jobs:
 
       - run:
           name: Check Ruby version
-          command: which -a ruby
+          command: which -a ruby && ruby --version
 
 workflows:
   macos:
