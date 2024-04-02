@@ -3,18 +3,26 @@ version: 2.1
 orbs:
   macos: circleci/macos@2.4.1
 
+
 jobs:
   build:
     macos:
-      xcode: "14.2.0"
+      xcode: "15.3.0"
+    resource_class: macos.x86.medium.gen2
     steps:
+      # - gcp-cli/install
+      # - run:
+          # name: install gcp gcp-cli
+          # command: |
+          #   (New-Object Net.WebClient).DownloadFile("https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe", "$env:Temp\GoogleCloudSDKInstaller.exe")
+          #   & $env:Temp\GoogleCloudSDKInstaller.exe
+          # shell: powershell.exe
+
       - run:
-          name: current dir
-          command: pwd
-      - macos/enable-vnc
-      - run: sleep 600
+          name: Check Ruby version
+          command: which -a ruby
 
 workflows:
-  build-and-test:
+  macos:
     jobs:
       - build
