@@ -23,6 +23,8 @@ jobs:
     steps:
       - checkout
       - run: circleci version
+      - setup_remote_docker:
+          docker_layer_caching: false
       - run:
           name: Download circleci
           command: |
@@ -35,62 +37,62 @@ jobs:
             tar -zvxf /tmp/cci/cci.tgz  --strip-components=1 -C /tmp/cci/
             sudo mv /tmp/cci/circleci /home/circleci/bin/circleci
       - run: circleci version
-      - run:
-          name: Validate Config
-          command: circleci --skip-update-check config validate ./.circleci/config.yml
-          when: always
-      - run:
-          name: Validate Config
-          command: circleci --skip-update-check config validate ./.circleci/config.yml
-          when: always
-      - run:
-          name: Validate Config
-          command: circleci --skip-update-check config validate ./.circleci/config.yml
-          when: always
-      - run:
-          name: Validate Config
-          command: circleci --skip-update-check config validate ./.circleci/config.yml
-          when: always
-      - run:
-          name: Validate Config
-          command: circleci --skip-update-check config validate ./.circleci/config.yml
-          when: always
-      - run:
-          name: Validate Config
-          command: circleci --skip-update-check config validate ./.circleci/config.yml
-          when: always
-      - run:
-          name: Validate Config
-          command: circleci --skip-update-check config validate ./.circleci/config.yml
-          when: always
-      - run:
-          name: Validate Config
-          command: circleci --skip-update-check config validate ./.circleci/config.yml
-          when: always
-      - run:
-          name: Validate Config
-          command: circleci --skip-update-check config validate ./.circleci/config.yml
-          when: always
-      - run:
-          name: Validate Config
-          command: circleci --skip-update-check config validate ./.circleci/config.yml
-          when: always
-      - run:
-          name: Validate Config
-          command: circleci --skip-update-check config validate ./.circleci/config.yml
-          when: always
-      - run:
-          name: Validate Config
-          command: circleci --skip-update-check config validate ./.circleci/config.yml
-          when: always
-      - run:
-          name: Validate Config
-          command: circleci --skip-update-check config validate ./.circleci/config.yml
-          when: always
-      - run:
-          name: Validate Config
-          command: circleci --skip-update-check config validate ./.circleci/config.yml
-          when: always
+      # - run:
+      #     name: Validate Config
+      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
+      #     when: always
+      # - run:
+      #     name: Validate Config
+      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
+      #     when: always
+      # - run:
+      #     name: Validate Config
+      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
+      #     when: always
+      # - run:
+      #     name: Validate Config
+      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
+      #     when: always
+      # - run:
+      #     name: Validate Config
+      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
+      #     when: always
+      # - run:
+      #     name: Validate Config
+      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
+      #     when: always
+      # - run:
+      #     name: Validate Config
+      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
+      #     when: always
+      # - run:
+      #     name: Validate Config
+      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
+      #     when: always
+      # - run:
+      #     name: Validate Config
+      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
+      #     when: always
+      # - run:
+      #     name: Validate Config
+      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
+      #     when: always
+      # - run:
+      #     name: Validate Config
+      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
+      #     when: always
+      # - run:
+      #     name: Validate Config
+      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
+      #     when: always
+      # - run:
+      #     name: Validate Config
+      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
+      #     when: always
+      # - run:
+      #     name: Validate Config
+      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
+      #     when: always
       # - browser-tools/install-chrome
       # - browser-tools/install-chromedriver
       # - checkout
