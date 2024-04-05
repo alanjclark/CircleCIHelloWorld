@@ -23,7 +23,9 @@ jobs:
     steps:
       - run:
           name: Check python version
-          command: which python
+          command: |
+            which python
+            python --version
       # - checkout
       # - run: circleci version
       # - setup_remote_docker:
