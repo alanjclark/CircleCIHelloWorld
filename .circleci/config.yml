@@ -6,12 +6,12 @@ orbs:
 workflows:
   dbtest:
     jobs:
-      - postgresql
+      - stuff
       
 jobs:
-  postgresql:
+  stuff:
     docker:
-      - image: cimg/python:3.10
+      - image: cimg/python:3.8
       #   environment:
       #     TEST_DATABASE_URL: postgresql://postgres@localhost/circle_test
       #     TEST_DATABASE_URL_POSTGRES: postgresql://postgres@localhost/test_db
@@ -21,22 +21,25 @@ jobs:
       #     POSTGRES_USER: postgres
 
     steps:
-      - checkout
-      - run: circleci version
-      - setup_remote_docker:
-          docker_layer_caching: false
       - run:
-          name: Download circleci
-          command: |
-            mkdir -p /tmp/cci
-            curl -sSL "https://github.com/CircleCI-Public/circleci-cli/releases/download/v0.1.29936/circleci-cli_0.1.29936_linux_amd64.tar.gz" -o /tmp/cci/cci.tgz
-            tar -zvxf /tmp/cci/cci.tgz  --strip-components=1 -C /tmp/cci/
-      - run:
-          name: Copy over circleci
-          command: |
-            tar -zvxf /tmp/cci/cci.tgz  --strip-components=1 -C /tmp/cci/
-            sudo mv /tmp/cci/circleci /home/circleci/bin/circleci
-      - run: circleci version
+          name: Check python version
+          command: which python
+      # - checkout
+      # - run: circleci version
+      # - setup_remote_docker:
+      #     docker_layer_caching: false
+      # - run:
+      #     name: Download circleci
+      #     command: |
+      #       mkdir -p /tmp/cci
+      #       curl -sSL "https://github.com/CircleCI-Public/circleci-cli/releases/download/v0.1.29936/circleci-cli_0.1.29936_linux_amd64.tar.gz" -o /tmp/cci/cci.tgz
+      #       tar -zvxf /tmp/cci/cci.tgz  --strip-components=1 -C /tmp/cci/
+      # - run:
+      #     name: Copy over circleci
+      #     command: |
+      #       tar -zvxf /tmp/cci/cci.tgz  --strip-components=1 -C /tmp/cci/
+      #       sudo mv /tmp/cci/circleci /home/circleci/bin/circleci
+      # - run: circleci version
       # - run:
       #     name: Validate Config
       #     command: circleci --skip-update-check config validate ./.circleci/config.yml
