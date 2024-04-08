@@ -10,6 +10,14 @@ jobs:
       xcode: "15.3.0"
     resource_class: macos.x86.medium.gen2
     steps:
+      - run:
+          name: Create keychain
+          command: security create-keychain -p "" circleci.keychain
+      - run:
+          name: Save password in keychain
+          command: security add-generic-password -a myaccount -w letmein -s circleci.keychain
+      - run:
+          security find-generic-password -a myaccount -s circleci.keychain
       # - gcp-cli/install
       # - run:
           # name: install gcp gcp-cli
