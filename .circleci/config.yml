@@ -7,9 +7,10 @@ orbs:
 jobs:
   build:
     macos:
-      xcode: "15.3.0"
+      xcode: "15.1.0"
     resource_class: macos.x86.medium.gen2
     steps:
+      - macos/enable-vnc
       - run:
           name: Create keychain
           command: security create-keychain -p "" circleci.keychain
