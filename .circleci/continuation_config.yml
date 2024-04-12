@@ -1,0 +1,20 @@
+version: 2.1
+
+parameters:
+  aws_account:
+    description: "Context CircleCI value for the aws account. Example: aws-devops"
+    type: string
+    default: ""
+
+jobs:
+  test:
+    docker:
+      - image: cimg/base:2022.03 # the primary container, where your job's commands are run
+    steps:
+      - run: "echo << pipeline.parameters.aws_account >>"
+
+workflows:
+  test-flow:
+    jobs:
+      - test:
+          context: << pipeline.parameters.aws_account >>
