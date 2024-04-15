@@ -6,7 +6,7 @@ parameters:
   aws_account:
     description: "Context CircleCI value for the aws account. Example: aws-devops"
     type: string
-    default: "demo-context"
+    default: "master"
 
 orbs:
   continuation: circleci/continuation@1.0.0
@@ -21,10 +21,10 @@ jobs:
       - run: echo "hello world" # run the `echo` command
       - continuation/continue:
           configuration_path: .circleci/continuation_config.yml
-         # parameters: |
-         #   {
-         #     "aws_account": "<< pipeline.parameters.aws_account >>"
-         #   }
+          parameters: |
+            {
+              "aws_account": "<< pipeline.parameters.aws_account >>"
+            }
 
 workflows:
   build-workflow:
