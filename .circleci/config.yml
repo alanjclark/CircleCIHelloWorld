@@ -109,8 +109,8 @@ jobs:
     - run:
         name: AVD stuff
         command: |
-          adb root
-          adb shell avbctl disable-verification
+          # adb root
+          # adb shell avbctl disable-verification
           adb reboot
           adb root
     - run:
