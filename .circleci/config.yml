@@ -1,6 +1,7 @@
 version: 2.1
 
 orbs:
+  android: circleci/android@2.5.0
 #   windows: circleci/windows@5.0.0
   # gcp-cli: circleci/gcp-cli@3.1.1
   # docker: circleci/docker@2.5.0
@@ -14,45 +15,62 @@ orbs:
 
 jobs:
   build:
-    machine:
-      image: android:default
-    resource_class: large
+    executor: 
+      name: android/android-machine
+      resource_class: large
+      tag: default
     steps:
+      - android/create-avd:
+          avd-name: myavd
+          install: true
+          system-image: system-images;android-26;default;x86
+      - android/start-emulator:
+          avd-name: myavd
+          no-window: true
+      - android/wait-for-emulator
       - run:
-          command: sdkmanager --install "system-images;android-26;google_apis;x86"
-          name: Install image
-      - run:
-          command: avdmanager create avd --force --name Pixel_2_API_26 --device pixel --package "system-images;android-26;google_apis;x86" --tag google_apis --abi x86 --sdcard 512M
-          name: Create Android Emulator
-      - run:
-          name: start AVD
-          command: |
-            emulator -avd Pixel_2_API_26 -verbose -show-kernel -no-audio -no-window -no-boot-anim -netdelay none -no-snapshot -wipe-data -gpu swiftshader_indirect -camera-back none -camera-front none -writable-system
-          background: true
-      - run:
-          name: wait for emulator
-          command: adb wait-for-device shell 'while [[ -z $(getprop dev.bootcomplete) ]]; do sleep 1; done;'
-      - run:
-          name: adb commands
+          name: AVD stuff
           command: |
             adb root
             adb shell avbctl disable-verification
             adb reboot
-            adb root    
-      - run:
-          name: Update Docker
-          command: |
-            curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-            echo \
-              "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-              $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-            sudo apt update
-            sudo apt-get install --only-upgrade docker-ce docker-ce-cli containerd.io -y
-      - run:
-          name: Docker stuff
-          command: |
-            docker version
-            docker build --progress plain
+            adb root
+
+      # - run:
+      #     command: sdkmanager --install "system-images;android-26;google_apis;x86"
+      #     name: Install image
+      # - run:
+      #     command: avdmanager create avd --force --name Pixel_2_API_26 --device pixel --package "system-images;android-26;google_apis;x86" --tag google_apis --abi x86 --sdcard 512M
+      #     name: Create Android Emulator
+      # - run:
+      #     name: start AVD
+      #     command: |
+      #       emulator -avd Pixel_2_API_26 -verbose -show-kernel -no-audio -no-window -no-boot-anim -netdelay none -no-snapshot -wipe-data -gpu swiftshader_indirect -camera-back none -camera-front none -writable-system
+      #     background: true
+      # - run:
+      #     name: wait for emulator
+      #     command: adb wait-for-device shell 'while [[ -z $(getprop dev.bootcomplete) ]]; do sleep 1; done;'
+      # - run:
+      #     name: adb commands
+      #     command: |
+      #       adb root
+      #       adb shell avbctl disable-verification
+      #       adb reboot
+      #       adb root    
+      # - run:
+      #     name: Update Docker
+      #     command: |
+      #       curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+      #       echo \
+      #         "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+      #         $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+      #       sudo apt update
+      #       sudo apt-get install --only-upgrade docker-ce docker-ce-cli containerd.io -y
+      # - run:
+      #     name: Docker stuff
+      #     command: |
+      #       docker version
+      #       docker build --progress plain
       # - run:
       #     name: check gcloud
       #     command: gcloud version
