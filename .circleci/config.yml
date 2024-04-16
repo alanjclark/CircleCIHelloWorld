@@ -19,6 +19,13 @@ jobs:
     resource_class: medium
     steps:
       - run:
+          name: adb commands
+          command: |
+            adb root
+            adb shell avbctl disable-verification
+            adb reboot
+            adb root    
+      - run:
           name: Update Docker
           command: |
             curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
