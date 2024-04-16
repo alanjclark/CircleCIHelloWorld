@@ -1,16 +1,16 @@
 version: 2.1
 
-# orbs:
-#   android: circleci/android@2.1.2
+orbs:
+  android: circleci/android@2.5.0
 
 references:
   defaults: &defaults
-    working_directory: ~/code
+    # working_directory: ~/code
     docker:
-      - image: cimg/android:2023.02.1-node
-    environment:
-      JVM_OPTS: -Xmx2048m
-      GRADLE_OPTS: -Xmx1536m -XX:+HeapDumpOnOutOfMemoryError -Dorg.gradle.caching=true -Dorg.gradle.configureondemand=true -Dkotlin.compiler.execution.strategy=in-process -Dkotlin.incremental=false
+      - image: cimg/android:default
+    # environment:
+    #   JVM_OPTS: -Xmx2048m
+    #   GRADLE_OPTS: -Xmx1536m -XX:+HeapDumpOnOutOfMemoryError -Dorg.gradle.caching=true -Dorg.gradle.configureondemand=true -Dkotlin.compiler.execution.strategy=in-process -Dkotlin.incremental=false
 
 commands:
   create-gradle-file:
@@ -38,6 +38,13 @@ jobs:
           command: |
             export LD_LIBRARY_PATH=${ANDROID_HOME}/emulator/lib64:${ANDROID_HOME}/emulator/lib64/qt/lib && emulator -avd test -noaudio -no-boot-anim -no-window -accel auto -verbose
           background: true
+      - run:
+          name: adb commands
+          command: |
+            adb root
+            adb shell avbctl disable-verification
+            adb reboot
+            adb root
       # - run:
       #     # run in parallel with the emulator starting up, to optimize build time
       #     name: Run androidTest task
@@ -47,12 +54,13 @@ jobs:
           name: Wait for emulator to start
           command: |
             circle-android wait-for-boot
-      - run:
-          name: Disable emulator animations
-          command: |
-            adb shell settings put global window_animation_scale 0.0
-            adb shell settings put global transition_animation_scale 0.0
-            adb shell settings put global animator_duration_scale 0.0
+
+      # - run:
+      #     name: Disable emulator animations
+      #     command: |
+      #       adb shell settings put global window_animation_scale 0.0
+      #       adb shell settings put global transition_animation_scale 0.0
+      #       adb shell settings put global animator_duration_scale 0.0
       # - run:
       #     name: Run UI tests (with retry)
       #     command: |
