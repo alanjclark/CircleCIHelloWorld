@@ -16,7 +16,7 @@ jobs:
   build:
     machine:
       image: android:default
-    resource_class: medium
+    resource_class: large
     steps:
       - run:
           command: sdkmanager --install "system-images;android-26;google_apis;x86"
