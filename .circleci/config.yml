@@ -15,9 +15,9 @@ orbs:
 
 jobs:
   build:
-    executor: 
+    executor:
       name: android/android-machine
-      resource_class: large
+      resource-class: large
       tag: default
     steps:
       - android/create-avd:
