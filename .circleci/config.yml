@@ -112,6 +112,7 @@ jobs:
           # adb root
           # adb shell avbctl disable-verification
           adb reboot
+          sleep 30
           adb root
     - run:
         name: uninstall gcp
