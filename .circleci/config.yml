@@ -11,7 +11,7 @@ workflows:
 jobs:
   stuff:
     docker:
-      - image: cimg/python:3.8
+      - image: cimg/python:3.10
       #   environment:
       #     TEST_DATABASE_URL: postgresql://postgres@localhost/circle_test
       #     TEST_DATABASE_URL_POSTGRES: postgresql://postgres@localhost/test_db
@@ -26,6 +26,9 @@ jobs:
           command: |
             which python
             python --version
+      - run:
+          name: Check symlink
+          command: cd /home/circleci/repo/venv/bin/ && ls -al
       # - checkout
       # - run: circleci version
       # - setup_remote_docker:
