@@ -26,7 +26,7 @@ jobs:
           command: echo $ANDROID_VERSION
       - run:
           name: Export var to file
-          command: touch var.txt && echo "Android verions is " > var.txt && echo $ANDROID_VERSION >> var.txt
+          command: touch var.txt && echo "Android verions is " > var.txt && echo "-$ANDROID_VERSION-" >> var.txt
       - run:
           name: Cat var from filters
           command: cat var.txt
