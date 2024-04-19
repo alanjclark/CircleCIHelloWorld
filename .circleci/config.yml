@@ -22,13 +22,22 @@ jobs:
 
     steps:
       - run:
-          name: Check python version
-          command: |
-            which python
-            python --version
+          name: Check var
+          command: echo $ANDROID_VERSION
       - run:
-          name: Check symlink
-          command: cd /home/circleci/repo/venv/bin/ && ls -al
+          name: Export var to file
+          command: touch var.txt && echo $ANDROID_VERSION >> var.txt
+      - run:
+          name: Cat var from filters
+          command: cat var.txt
+      # - run:
+      #     name: Check python version
+      #     command: |
+      #       which python
+      #       python --version
+      # - run:
+      #     name: Check symlink
+      #     command: cd /home/circleci/repo/venv/bin/ && ls -al
       # - checkout
       # - run: circleci version
       # - setup_remote_docker:
