@@ -19,8 +19,11 @@ jobs:
       # - image: cimg/postgres:14.9
       #   environment:
       #     POSTGRES_USER: postgres
+    resource_class: medium+
 
     steps:
+      - setup_remote_docker:
+          docker_layer_caching: false
       - run:
           name: Check var
           command: echo $ANDROID_VERSION
