@@ -1,9 +1,14 @@
-# Orb 'circleci/android@2.5.0' resolved to 'circleci/android@2.5.0'
-version: 2
+version: 2.1
+
+orbs:
+  android: circleci/android@2.5.0
+
 jobs:
   build:
-    machine:
-      image: android:default
+    executor:
+      name: android/android-machine
+      resource_class: large
+      tag: default
     steps:
     - run:
         background: false
@@ -111,9 +116,9 @@ jobs:
         command: |
           # adb root
           # adb shell avbctl disable-verification
-          adb reboot
-          sleep 30
-          adb root
+          adb reboot && adb root
+          # sleep 30
+          # adb root
     - run:
         name: uninstall gcp
         command: "# Check the host platform\ncase \"$(uname -s)\" in\n  Linux*)     host=Linux;;\n  Darwin*)    host=Mac;;\n  CYGWIN*|MINGW32*|MSYS*|MINGW*) host=Windows;;\n  *)          host=\"UNKNOWN:${unameOut}\"\nesac\n\n# Set sudo to work whether logged in as root user or non-root user.\n# Remove sudo if the host is Windows\nif [ \"$host\" = \"Windows\" ]; then sudo=\"\"; \nelif [ \"$(id -u)\" -eq 0 ]; then sudo=\"\"; else sudo=\"sudo\"; fi\n\ndeclare installation_directory\ninstallation_directory=\"$(gcloud info --format='value(installation.sdk_root)')\"\n\ndeclare config_directory\nconfig_directory=\"$(gcloud info --format='value(config.paths.global_config_dir)')\"\n\n# shellcheck disable=SC2086 # $sudo is not a variable, it's a command.\n$sudo rm -rf \"$installation_directory\" || return 1\n\n# shellcheck disable=SC2086 # $sudo is not a variable, it's a command.\n$sudo rm -rf \"$config_directory\" || return 1\n# gcloud components update\n# curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-463.0.0-linux-x86_64.tar.gz && tar -xf google-cloud-cli-463.0.0-linux-x86_64.tar.gz \n# # && ./google-cloud-sdk/install.sh\n"
@@ -126,4 +131,3 @@ workflows:
   check-this-out:
     jobs:
     - build
-  version: 2
