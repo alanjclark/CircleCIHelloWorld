@@ -25,6 +25,9 @@ jobs:
       - setup_remote_docker:
           docker_layer_caching: false
       - run:
+          name: Check cgroup version
+          command: grep cgroup /proc/filesystems
+      - run:
           name: Check var
           command: echo $ANDROID_VERSION
       - run:
