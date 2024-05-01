@@ -28,6 +28,9 @@ jobs:
           name: Check cgroup version
           command: grep cgroup /proc/filesystems
       - run:
+          name: Check cgroup in use
+          command: stat -fc %T /sys/fs/cgroup/
+      - run:
           name: Check var
           command: echo $ANDROID_VERSION
       - run:
