@@ -23,7 +23,7 @@ jobs:
         environment:
           PARAM_ADDITIONAL_ARGS: ''
           PARAM_AVD_NAME: myavd
-          PARAM_INSTALL: true
+          PARAM_INSTALL: "true"
           PARAM_SYSTEM_IMAGE: system-images;android-26;default;x86
         name: Create avd "myavd"
     - run:
@@ -72,15 +72,15 @@ jobs:
           PARAM_AVD_NAME: myavd
           PARAM_CAMERA_BACK: ''
           PARAM_CAMERA_FRONT: ''
-          PARAM_DELAY_ABD: false
+          PARAM_DELAY_ABD: "false"
           PARAM_GPU: swiftshader_indirect
           PARAM_MEMORY: -1
-          PARAM_NO_AUDIO: true
-          PARAM_NO_BOOT_ANIM: true
-          PARAM_NO_SNAPSHOT: true
-          PARAM_NO_WINDOW: true
+          PARAM_NO_AUDIO: "true"
+          PARAM_NO_BOOT_ANIM: "true"
+          PARAM_NO_SNAPSHOT: "true"
+          PARAM_NO_WINDOW: "true"
           PARAM_OVERRIDE_ARGS: ''
-          PARAM_VERBOSE: true
+          PARAM_VERBOSE: "true"
         name: Start emulator
     # - run:
     #     command: "#!/bin/bash\necho \"The following are the files used to generate the cache checksum:\"\neval find \"${PARAM_FIND_ARGS}\"\neval find \"${PARAM_FIND_ARGS}\" | sort | xargs cat |\nshasum | awk '{print $1}' > /tmp/gradle_cache_seed \n"
