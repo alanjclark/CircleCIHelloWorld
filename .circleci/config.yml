@@ -29,7 +29,60 @@ jobs:
       - run:
           name: PWD
           command: |
-            choco install awscli
+            set -euo pipefail
+
+            AWS_CLI_STR_AWS_CLI_VERSION="$(echo "${AWS_CLI_STR_AWS_CLI_VERSION}" | circleci env subst)"
+            AWS_CLI_EVAL_INSTALL_DIR="$(eval echo "${AWS_CLI_EVAL_INSTALL_DIR}" | circleci env subst)"
+            AWS_CLI_EVAL_BINARY_DIR="$(eval echo "${AWS_CLI_EVAL_BINARY_DIR}" | circleci env subst)"
+
+            eval "${SCRIPT_UTILS}"
+            detect_os
+            set_sudo
+
+            # Only support AWS CLI V2
+            if echo "${AWS_CLI_STR_AWS_CLI_VERSION}" | grep -q "^1\."; then
+                echo "AWS CLI V1 (v${AWS_CLI_STR_AWS_CLI_VERSION}) is not supported."
+                exit 1
+            fi
+
+            # Install per platform
+            if [ "${SYS_ENV_PLATFORM}" = "linux" ]; then
+                eval "${SCRIPT_INSTALL_LINUX}"
+            elif [ "${SYS_ENV_PLATFORM}" = "windows" ]; then
+                eval "${SCRIPT_INSTALL_WINDOWS}"
+            elif [ "${SYS_ENV_PLATFORM}" = "macos" ]; then
+                eval "${SCRIPT_INSTALL_MACOS}"
+            else
+                echo "This orb does not currently support your platform."
+                exit 1
+            fi
+
+            aws_cli_install_required_file="/tmp/aws_cli_installed"
+            if ! is_aws_cli_install_required "${aws_cli_install_required_file}"; then
+                exit 0
+            fi
+
+            if ! is_aws_cli_installed; then
+                echo "AWS CLI not found. Installing '${AWS_CLI_STR_AWS_CLI_VERSION}'"
+                install_aws_cli "${AWS_CLI_STR_AWS_CLI_VERSION}"
+            elif [ "${AWS_CLI_BOOL_OVERRIDE}" = "1" ]; then
+                upgrade_aws_cli "${AWS_CLI_STR_AWS_CLI_VERSION}"
+            else
+                echo "Using version of AWS CLI that is already installed, skipping installation."
+            fi
+
+            # Create file to establish that the CLI has already been installed by the orb.
+            touch "$aws_cli_install_required_file"
+
+            echo 'export AWS_PAGER=""' >>"$BASH_ENV"
+
+            touch "${BASH_ENV}"
+            # shellcheck source=/dev/null
+            . "${BASH_ENV}"
+
+            aws --version
+            echo "Client-side paging for AWS CLI commands has been disabled."
+            # choco install awscli
       # - run:
       #     name: gcloud
       #     command: |
