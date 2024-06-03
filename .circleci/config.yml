@@ -24,9 +24,14 @@ jobs:
             export ANDROID_SDK_PATH=/opt/homebrew/Caskroom/android-sdk
             export ANDROID_HOME=/opt/homebrew/Caskroom/android-sdk
             export ANDROID_SDK_ROOT=/opt/homebrew/Caskroom/android-sdk
-            # (yes || true) |
-            sdkmanager "platforms;android-33" "build-tools;33.0.0" "platform-tools" "emulator" "extras;google;m2repository" "extras;android;m2repository"
-            export AndroidSdkDirectory=$ANDROID_SDK_ROOT      
+            # # (yes || true) |
+            # sdkmanager "platforms;android-33" "build-tools;33.0.0" "platform-tools" "emulator" "extras;google;m2repository" "extras;android;m2repository"
+            # export AndroidSdkDirectory=$ANDROID_SDK_ROOT
+      - run:
+          name: Install API levels
+          command: |
+            (yes || true) | sdkmanager "platforms;android-33" "build-tools;33.0.0" "platform-tools" "emulator" "extras;google;m2repository" "extras;android;m2repository"
+            export AndroidSdkDirectory=$ANDROID_SDK_ROOT
       - run:
           name: Check SDK levels
           command: sdkmanager --list
