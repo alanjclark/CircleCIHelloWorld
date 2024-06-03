@@ -7,19 +7,29 @@ orbs:
 jobs:
   build:
     macos:
-      xcode: "14.3.1"
+      xcode: "15.2.0"
     resource_class: macos.m1.medium.gen1
     steps:
-      - macos/enable-vnc
+      # - macos/enable-vnc
       - macos/install-rosetta
       - run:
-          name: Create keychain
-          command: security create-keychain -p "" circleci.keychain
+          name: Install Android SDK
+          command: |
+            brew install --cask android-sdk
+            export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
+            echo $JAVA_HOME
+            export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
+            export ANDROID_SDK_PATH=/opt/homebrew/Caskroom/android-sdk
+            export ANDROID_HOME=/opt/homebrew/Caskroom/android-sdk
+            export ANDROID_SDK_ROOT=/opt/homebrew/Caskroom/android-sdk
+            # (yes || true) |
+            sdkmanager "platforms;android-33" "build-tools;33.0.0" "platform-tools" "emulator" "extras;google;m2repository" "extras;android;m2repository"
+            export AndroidSdkDirectory=$ANDROID_SDK_ROOT      
       - run:
-          name: Save password in keychain
-          command: security add-generic-password -a myaccount -w letmein -s circleci.keychain
-      - run:
-          security find-generic-password -a myaccount -s circleci.keychain
+          name: Check SDK levels
+          command: sdkmanager --list
+      # - run:
+      #     security find-generic-password -a myaccount -s circleci.keychain
       # - gcp-cli/install
       # - run:
           # name: install gcp gcp-cli
