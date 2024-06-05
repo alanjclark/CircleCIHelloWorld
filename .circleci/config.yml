@@ -119,7 +119,7 @@ jobs:
           adb reboot
           # sleep 30
           # adb root
-    - android/wait-for-emulator
+    # - android/wait-for-emulator
     - run:
         name: ADB root
         command: adb root
