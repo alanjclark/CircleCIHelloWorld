@@ -12,19 +12,7 @@ jobs:
     steps:
     - run:
         background: false
-        command: |
-          #!/bin/bash
-
-          if [ "${PARAM_INSTALL}" == 1 ]; then
-              sdkmanager "${PARAM_SYSTEM_IMAGE}"
-          fi
-
-          echo "no" | avdmanager --verbose create avd -n ${PARAM_AVD_NAME} -k ${PARAM_SYSTEM_IMAGE} ${PARAM_ADDITIONAL_ARGS}
-        environment:
-          PARAM_ADDITIONAL_ARGS: ''
-          PARAM_AVD_NAME: myavd
-          PARAM_INSTALL: "true"
-          PARAM_SYSTEM_IMAGE: system-images;android-26;default;x86
+        command: sleep 300
         name: Create avd "myavd"
     - run:
         background: true
