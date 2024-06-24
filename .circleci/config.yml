@@ -45,7 +45,7 @@ jobs:
             #   API_ENDPOINT="https://circleci.com/api/v2/project/gh/saks-com/Order_Placement_Scenarios/pipeline"
             # elif [[ "<<pipeline.parameters.TriggerFlow>>" == "QaBuild" ]]; then
             #   API_ENDPOINT="https://circleci.com/api/v2/project/gh/saks-com/CX_Automation_QA_Stage_Payment/pipeline"
-            elif [[ "<<pipeline.parameters.TriggerFlow>>" == "SFOMSOrderPlacement" ]]; then
+            if [[ "<<pipeline.parameters.TriggerFlow>>" == "SFOMSOrderPlacement" ]]; then
               API_ENDPOINT="https://circleci.com/api/v2/project/gh/alanjclark/circleci-test/pipeline"
             else
               echo "Invalid value for triggerflow parameter"
