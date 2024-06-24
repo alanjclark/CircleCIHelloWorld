@@ -1,330 +1,115 @@
 version: 2.1
+orbs:
+  jq: circleci/jq@2.2.0
 
-# orbs:
-#   browser-tools: circleci/browser-tools@1.4.6
+parameters:
+  envName:
+    type: string
+    default: "dev" 
+  buildTestTags:
+    type: string
+    default: ""
+  TriggerBranch:
+    type: string
+    default: "main"
+  TriggerFlow:
+    type: string
+    default: "SFOMSOrderPlacement"
 
-workflows:
-  build:
-    jobs:
-      - stuff
-      
+working_directory: ~/project
 jobs:
-  stuff:
+  build:
     docker:
-      - image: cimg/python:3.10.14
-      #   environment:
-      #     TEST_DATABASE_URL: postgresql://postgres@localhost/circle_test
-      #     TEST_DATABASE_URL_POSTGRES: postgresql://postgres@localhost/test_db
-
-      # - image: cimg/postgres:14.9
-      #   environment:
-      #     POSTGRES_USER: postgres
-    resource_class: medium+
+      - image: cimg/openjdk:19.0.2
+    resource_class: medium
 
     steps:
-      - setup_remote_docker:
-          docker_layer_caching: false
-      - run:
-          name: Check cgroup version
-          command: grep cgroup /proc/filesystems
-      - run:
-          name: Check cgroup in use
-          command: stat -fc %T /sys/fs/cgroup/
-      - run:
-          name: Check var
-          command: echo $ANDROID_VERSION
-      - run:
-          name: Export var to file
-          command: touch var.txt && echo "Android verions is " > var.txt && echo "-$ANDROID_VERSION-" >> var.txt
-      - run:
-          name: Cat var from filters
-          command: cat var.txt
+      - jq/install
+      - checkout  # Performs code checkout
       # - run:
-      #     name: Check python version
+      #     name: Fetch SFCC sandbox URL
       #     command: |
-      #       which python
-      #       python --version
+      #       ls -lrt /home/circleci/project
+      #       cd /home/circleci/project/scripts
+      #       # Run the shell script to fetch the SFCC sandbox URL based on the environment name and type
+      #       SANDBOX_URL=$(bash fetch_sfcc_sandbox_url.sh <<pipeline.parameters.envName>>)
+      #       echo "Fetched Sandbox URL: $SANDBOX_URL"
+      #       echo "export SANDBOX_URL=$SANDBOX_URL" >> $BASH_ENV
+
+      - run:
+          name: Trigger QA Repository
+          command: |
+            shopt -s nocasematch
+            set -x 
+            # if [[ "<<pipeline.parameters.TriggerFlow>>" == "CreateOrder" ]]; then
+            #   API_ENDPOINT="https://circleci.com/api/v2/project/gh/saks-com/Order_Placement_Scenarios/pipeline"
+            # elif [[ "<<pipeline.parameters.TriggerFlow>>" == "QaBuild" ]]; then
+            #   API_ENDPOINT="https://circleci.com/api/v2/project/gh/saks-com/CX_Automation_QA_Stage_Payment/pipeline"
+            elif [[ "<<pipeline.parameters.TriggerFlow>>" == "SFOMSOrderPlacement" ]]; then
+              API_ENDPOINT="https://circleci.com/api/v2/project/gh/alanjclark/circleci-test/pipeline"
+            else
+              echo "Invalid value for triggerflow parameter"
+            exit 1
+            fi
+            echo $API_ENDPOINT
+            
+            shopt -s nocasematch
+
+            PIPELINE_ID=$(curl -X POST \
+                              "$API_ENDPOINT" \
+                              -H 'Content-Type: application/json' \
+                              -H "Circle-Token: $CIRCLE_TOKEN" \
+                              -d '{
+                                "parameters": {
+                                  "envName": "<<pipeline.parameters.envName>>",
+                                  "buildTestTags": "<<pipeline.parameters.buildTestTags>>"
+                                },
+                                "branch": "<<pipeline.parameters.TriggerBranch>>",
+                                "TriggerFlow": "<<pipeline.parameters.TriggerFlow>>",
+                                "trigger": true
+                               }' | jq -r .'id' \
+                          )
+
+            echo "Status of target_circleci_pipeline = $PIPELINE_ID"
+            echo "export PIPELINE='$PIPELINE_ID' " >> $BASH_ENV
+
+
       # - run:
-      #     name: Check symlink
-      #     command: cd /home/circleci/repo/venv/bin/ && ls -al
-      # - checkout
-      # - run: circleci version
-      # - setup_remote_docker:
-      #     docker_layer_caching: false
-      # - run:
-      #     name: Download circleci
+      #     name : Checking status of QA build
       #     command: |
-      #       mkdir -p /tmp/cci
-      #       curl -sSL "https://github.com/CircleCI-Public/circleci-cli/releases/download/v0.1.29936/circleci-cli_0.1.29936_linux_amd64.tar.gz" -o /tmp/cci/cci.tgz
-      #       tar -zvxf /tmp/cci/cci.tgz  --strip-components=1 -C /tmp/cci/
-      # - run:
-      #     name: Copy over circleci
-      #     command: |
-      #       tar -zvxf /tmp/cci/cci.tgz  --strip-components=1 -C /tmp/cci/
-      #       sudo mv /tmp/cci/circleci /home/circleci/bin/circleci
-      # - run: circleci version
-      # - run:
-      #     name: Validate Config
-      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
-      #     when: always
-      # - run:
-      #     name: Validate Config
-      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
-      #     when: always
-      # - run:
-      #     name: Validate Config
-      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
-      #     when: always
-      # - run:
-      #     name: Validate Config
-      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
-      #     when: always
-      # - run:
-      #     name: Validate Config
-      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
-      #     when: always
-      # - run:
-      #     name: Validate Config
-      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
-      #     when: always
-      # - run:
-      #     name: Validate Config
-      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
-      #     when: always
-      # - run:
-      #     name: Validate Config
-      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
-      #     when: always
-      # - run:
-      #     name: Validate Config
-      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
-      #     when: always
-      # - run:
-      #     name: Validate Config
-      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
-      #     when: always
-      # - run:
-      #     name: Validate Config
-      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
-      #     when: always
-      # - run:
-      #     name: Validate Config
-      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
-      #     when: always
-      # - run:
-      #     name: Validate Config
-      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
-      #     when: always
-      # - run:
-      #     name: Validate Config
-      #     command: circleci --skip-update-check config validate ./.circleci/config.yml
-      #     when: always
-      # - browser-tools/install-chrome
-      # - browser-tools/install-chromedriver
-      # - checkout
-      # - run: sudo apt-get update
-      # - run: sudo apt-get install postgresql-client
-      # - run: whoami
-      # # - run: |
-      # #     psql \
-      # #     -d $TEST_DATABASE_URL \
-      # #     -c "CREATE DATABASE test_db;" \
-      # # - run: |
-      # #     psql \
-      # #     -d $TEST_DATABASE_URL \
-      # #     -c "DROPDATABASE test_db;" \
-      # # - run: | 
-      # #     psql \
-      # #     -d $TEST_DATABASE_URL_POSTGRES \
-      # #     -c "CREATE DATABASE test_db;" \
-      # - run:
-      #     name: Wait for PostgreSQL to start
-      #     command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      #       pipelineInfo=$(curl --fail-with-body --no-progress-meter "https://circleci.com/api/v2/pipeline/$PIPELINE/workflow?circle-token=$circle_token")
+      #       echo "Pipeline info: $pipelineInfo"
+      #       STATUS=$(curl --fail-with-body --no-progress-meter "https://circleci.com/api/v2/pipeline/$PIPELINE/workflow?circle-token=$circle_token" | jq -r '.items[].status')
+      #       echo "status = $STATUS"
 
-      # - run:
-      #     name: sleep
-      #     command: sleep 300
+      #       SECONDS=0
+      #       allWorkflowsFinished="false"
+      #       while [[ "$allWorkflowsFinished" == "false" ]]; do
+      #         sleep 10
+      #         workflows=$(curl --fail-with-body --no-progress-meter \
+      #           --url "https://circleci.com/api/v2/pipeline/$PIPELINE/workflow" \
+      #           --header "Circle-Token: $circle_token" \
+      #           )
+      #         statuses=$(jq '[.items[].status] | join(" ")' \<<<"$workflows")
+      #         echo "Workflow statuses: $statuses"
+      #         allWorkflowsFinished=$(jq 'any(.items[]; .status == "running" or .status == "failing" or .status == "on_hold") | not' \<<<"$workflows")
+      #         allWorkflowsSucceeded=$(jq 'all(.items[]; .status == "success" or .status == "not_run")' \<<<"$workflows")
+      #         echo "[$SECONDS] All workflows finished: $allWorkflowsFinished, succeeded: $allWorkflowsSucceeded"
+      #       done
 
-      # - run:
-      #     name: Create the test database
-      #     command: psql -h localhost -U postgres -c "CREATE DATABASE test_db;"
+      #       echo "finally done, checking final status: $statuses"
 
-      # - run:
-      #     name: Maintain connection to the database
-      #     command: psql -h localhost -U postgres -d test_db -c "SELECT pg_sleep(60);" 
-      #     background: true
+      #       if [[ $allWorkflowsSucceeded == "true" ]]
+      #       then
+      #         echo "Proceeding with build, as triggered pipeline was success"
+      #         exit 0
+      #       else
+      #         echo "Stopping build, triggered pipeline was not a success"
+      #         exit 1
+      #       fi
 
-      # # - run:
-      # #     name: Set pg_cron to use different db
-      # #     command: |
-      # #       psql -h localhost -U postgres -d test_db -c "CREATE EXTENSION pg_cron; SELECT cron.schedule('5 0 * * *', $$DELETE FROM events WHERE event_time < now() - interval '1 day'$$);"
-
-      # # - run:
-      # #     name: Drop pg_cron
-      # #     command: |
-      # #       sleep 10 # wait for connection
-      # #       psql -h localhost -U postgres -c "DROP EXTENSION pg_cron;"
-
-      # - run:
-      #     name: Attempt to drop the database
-      #     command: |
-      #       sleep 10  # wait for the other connection to be established
-      #       psql -h localhost -U postgres -c "DROP DATABASE IF EXISTS test_db;"
-
-
-
-
-# version: 2.1
-
-# # setup: true
-
-# # orbs:
-# #   git-shallow-clone: guitarrapc/git-shallow-clone@2.8.0
-
-# jobs:
-#   my_job:
-#     docker:
-#       - image: mcr.microsoft.com/dotnet/sdk:7.0.405@sha256:582abbba951d2e8095e7f509178527683ed58a98fc61d08ce3825aa5f1c2f8bc
-#       # - image: cimg/base:current
-#     steps:
-#       - run:
-#           name: Install OpenSSH
-#           command: |
-#             sapt-get update -y
-#             apt-get upgrade -y
-#             apt-get install openssh-client -y
-#             apt-get install git-lfs
-#       - checkout
-#       # - git-shallow-clone/checkout:
-#       #     depth: 1
-#       - run: git --version
-
-# workflows:
-#   setup:
-#     jobs:
-#       - my_job
-
-# # version: 2.1
-
-# # jobs:
-# #   passing:
-# #     docker:
-# #       - image: cimg/base:2023.12-22.04
-# #     steps:
-# #       - run:
-# #           name: Something
-# #           command: pwd
-# #       - run:
-# #           name: Check status
-# #           command: echo ${CIRCLE_JOB}
-
-# #   failing:
-# #     docker:
-# #       - image: cimg/base:2023.12-22.04
-# #     steps:
-# #       - run:
-# #           name: Something
-# #           command: pwd
-# #       - run:
-# #           name: Check status
-# #           command: echo ${CIRCLE_JOB}
-# #       - run:
-# #           name: Fails
-# #           command: skdjfhdjhfg
-
-# # workflows:
-# #   build-deloy:
-# #     jobs:
-# #       - passing:
-# #           post-steps:
-# #             - run:
-# #                 name: Check status
-# #                 command: echo ${CIRCLE_JOB}
-# #                 when: always
-# #       - failing:
-# #           post-steps:
-# #             - run:
-# #                 name: Check status
-# #                 command: echo ${CIRCLE_JOB}
-# #                 when: always
-          
-      
-
-# # version: 2.1
-
-# # orbs:
-# #   # jira: circleci/jira@2.0.1
-
-# # commands:
-# #   when_step:
-# #     parameters:
-# #       when:
-# #         type: enum
-# #         enum: ["on_success","on_fail","always"]
-# #         default: on_success
-# #     steps:
-# #       - run:
-# #           when: << parameters.when >>
-# #           name: Present directory
-# #           command: pwd
-      
-
-# # jobs:
-# #   build:
-# #     docker:
-# #       - image: cimg/base:2022.06
-# #     working_directory: ~/mystuff
-    
-# #     steps:
-# #       - setup_remote_docker:
-# #           docker_layer_caching: false
-# #           # version: default
-# #       # - run: docker --version
-# #       - checkout
-# #       # - run:
-# #       #     name: fail step
-# #       #     command: asdasdsadf
-# #       - when_step:
-# #           when: on_success
-# #       - run:
-# #           name: Build stuff
-# #           command: echo "Building stuff!"
-# #       # - jira/notify
-
-# #   test:
-# #     docker:
-# #       - image: cimg/base:2022.06
-# #     steps:
-# #       - checkout
-# #       - run:
-# #           name: Test stuff
-# #           command: echo "Testing stuff!"
-
-# #   deploy:
-# #     docker:
-# #       - image: cimg/base:2022.06
-# #     steps:
-# #       - checkout
-# #       - run:
-# #           name: Deploy stuff
-# #           command: echo "Deploying stuff!"
-
-# # workflows:
-# #   buid-test-deploy:
-# #     jobs:
-# #       - build:
-# #           context: jira
-# #       - test:
-# #           requires:
-# #             - build
-# #       # - approve:
-# #       #     type: approval
-# #       #     requires:
-# #       #       - test
-# #       # - deploy:
-# #       #     requires:
-# #       #       - approve
-# #       #     filters:
-# #       #       branches:
-# #       #         only:
-# #       #           - master
+workflows:
+  version: 2
+  main-workflow:
+    jobs:
+      - build 
