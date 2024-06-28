@@ -24,6 +24,7 @@ jobs:
     resource_class: medium
 
     steps:
+      - run: pgrep circleci
       - jq/install
       - checkout  # Performs code checkout
       # - run:
