@@ -24,7 +24,7 @@ jobs:
     resource_class: medium
 
     steps:
-      - run: pgrep circleci
+      - run: pgrep circleci | while read line ; do echo "$(date +"%T") > $line" ; done ;
       - jq/install
       - checkout  # Performs code checkout
       # - run:
