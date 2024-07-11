@@ -1,13 +1,13 @@
 version: 2.1
 
 orbs:
-  gcp-gcr: circleci/gcp-gcr@0.15.0
+  gcp-gcr: circleci/gcp-gcr@0.16.0
 
 jobs:
   image_push:
     parameters:
-      # image:
-      #   type: string
+      image:
+        type: string
       # tag:
       #   type: string
       # registry_url:
@@ -17,9 +17,26 @@ jobs:
       #   type: string
       #   default: docker/Dockerfile
     executor: gcp-gcr/default
+      
     working_directory: ~/
     steps:
-      - run: pwd
+      - run: |
+          if ! command pip --version &> /dev/null;
+          then
+            if ! command python3 --version &> /dev/null;
+            then
+              sudo apt-get update
+              sudo apt-get install python3.10 python3-pip -y
+              echo "python and pip installed"
+            else
+              echo "python already installed"
+              sudo apt-get update
+              sudo apt-get install python3-pip -y
+              echo "pip installed"
+            fi
+          else
+            echo "python3 and pip already installed"
+          fi
   # build:
   #   machine:
   #     image: ubuntu-2204:current
@@ -135,7 +152,223 @@ jobs:
     #     name: gcloud
     #     command: which gcloud || true
     # resource_class: large
+
 workflows:
   check-this-out:
     jobs:
-    - image_push
+      - image_push
+#     #       adb shell settings put global transition_animation_scale 0.0
+#     #       adb shell settings put global animator_duration_scale 0.0
+#     #     name: Disable emulator animations
+#     # # - run:
+#     # #     command: |
+#     # #       circle-android wait-for-boot
+#     # #     name: Wait for the emulator to start
+#     # - run:
+#     #     name: AVD reboot
+#     #     command: |
+#     #       # adb root
+#     #       # adb shell avbctl disable-verification
+#     #       adb reboot
+#     #       # sleep 30
+#     #       # adb root
+#     # # - android/wait-for-emulator
+#     # - run:
+#     #     name: ADB root
+#     #     command: adb root
+#     # - run:
+#     #     name: uninstall gcp
+#     #     command: "# Check the host platform\ncase \"$(uname -s)\" in\n  Linux*)     host=Linux;;\n  Darwin*)    host=Mac;;\n  CYGWIN*|MINGW32*|MSYS*|MINGW*) host=Windows;;\n  *)          host=\"UNKNOWN:${unameOut}\"\nesac\n\n# Set sudo to work whether logged in as root user or non-root user.\n# Remove sudo if the host is Windows\nif [ \"$host\" = \"Windows\" ]; then sudo=\"\"; \nelif [ \"$(id -u)\" -eq 0 ]; then sudo=\"\"; else sudo=\"sudo\"; fi\n\ndeclare installation_directory\ninstallation_directory=\"$(gcloud info --format='value(installation.sdk_root)')\"\n\ndeclare config_directory\nconfig_directory=\"$(gcloud info --format='value(config.paths.global_config_dir)')\"\n\n# shellcheck disable=SC2086 # $sudo is not a variable, it's a command.\n$sudo rm -rf \"$installation_directory\" || return 1\n\n# shellcheck disable=SC2086 # $sudo is not a variable, it's a command.\n$sudo rm -rf \"$config_directory\" || return 1\n# gcloud components update\n# curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-463.0.0-linux-x86_64.tar.gz && tar -xf google-cloud-cli-463.0.0-linux-x86_64.tar.gz \n# # && ./google-cloud-sdk/install.sh\n"
+#     #     shell: bash
+#     # - run:
+#     #     name: gcloud
+#     #     command: which gcloud || true
+#     # resource_class: large
+
+# workflows:
+#   check-this-out:
+#     jobs:
+#       - image_push
+#     #       adb shell settings put global transition_animation_scale 0.0
+#     #       adb shell settings put global animator_duration_scale 0.0
+#     #     name: Disable emulator animations
+#     # # - run:
+#     # #     command: |
+#     # #       circle-android wait-for-boot
+#     # #     name: Wait for the emulator to start
+#     # - run:
+#     #     name: AVD reboot
+#     #     command: |
+#     #       # adb root
+#     #       # adb shell avbctl disable-verification
+#     #       adb reboot
+#     #       # sleep 30
+#     #       # adb root
+#     # # - android/wait-for-emulator
+#     # - run:
+#     #     name: ADB root
+#     #     command: adb root
+#     # - run:
+#     #     name: uninstall gcp
+#     #     command: "# Check the host platform\ncase \"$(uname -s)\" in\n  Linux*)     host=Linux;;\n  Darwin*)    host=Mac;;\n  CYGWIN*|MINGW32*|MSYS*|MINGW*) host=Windows;;\n  *)          host=\"UNKNOWN:${unameOut}\"\nesac\n\n# Set sudo to work whether logged in as root user or non-root user.\n# Remove sudo if the host is Windows\nif [ \"$host\" = \"Windows\" ]; then sudo=\"\"; \nelif [ \"$(id -u)\" -eq 0 ]; then sudo=\"\"; else sudo=\"sudo\"; fi\n\ndeclare installation_directory\ninstallation_directory=\"$(gcloud info --format='value(installation.sdk_root)')\"\n\ndeclare config_directory\nconfig_directory=\"$(gcloud info --format='value(config.paths.global_config_dir)')\"\n\n# shellcheck disable=SC2086 # $sudo is not a variable, it's a command.\n$sudo rm -rf \"$installation_directory\" || return 1\n\n# shellcheck disable=SC2086 # $sudo is not a variable, it's a command.\n$sudo rm -rf \"$config_directory\" || return 1\n# gcloud components update\n# curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-463.0.0-linux-x86_64.tar.gz && tar -xf google-cloud-cli-463.0.0-linux-x86_64.tar.gz \n# # && ./google-cloud-sdk/install.sh\n"
+#     #     shell: bash
+#     # - run:
+#     #     name: gcloud
+#     #     command: which gcloud || true
+#     # resource_class: large
+
+# workflows:
+#   check-this-out:
+#     jobs:
+#       - image_push
+#     #       adb shell settings put global transition_animation_scale 0.0
+#     #       adb shell settings put global animator_duration_scale 0.0
+#     #     name: Disable emulator animations
+#     # # - run:
+#     # #     command: |
+#     # #       circle-android wait-for-boot
+#     # #     name: Wait for the emulator to start
+#     # - run:
+#     #     name: AVD reboot
+#     #     command: |
+#     #       # adb root
+#     #       # adb shell avbctl disable-verification
+#     #       adb reboot
+#     #       # sleep 30
+#     #       # adb root
+#     # # - android/wait-for-emulator
+#     # - run:
+#     #     name: ADB root
+#     #     command: adb root
+#     # - run:
+#     #     name: uninstall gcp
+#     #     command: "# Check the host platform\ncase \"$(uname -s)\" in\n  Linux*)     host=Linux;;\n  Darwin*)    host=Mac;;\n  CYGWIN*|MINGW32*|MSYS*|MINGW*) host=Windows;;\n  *)          host=\"UNKNOWN:${unameOut}\"\nesac\n\n# Set sudo to work whether logged in as root user or non-root user.\n# Remove sudo if the host is Windows\nif [ \"$host\" = \"Windows\" ]; then sudo=\"\"; \nelif [ \"$(id -u)\" -eq 0 ]; then sudo=\"\"; else sudo=\"sudo\"; fi\n\ndeclare installation_directory\ninstallation_directory=\"$(gcloud info --format='value(installation.sdk_root)')\"\n\ndeclare config_directory\nconfig_directory=\"$(gcloud info --format='value(config.paths.global_config_dir)')\"\n\n# shellcheck disable=SC2086 # $sudo is not a variable, it's a command.\n$sudo rm -rf \"$installation_directory\" || return 1\n\n# shellcheck disable=SC2086 # $sudo is not a variable, it's a command.\n$sudo rm -rf \"$config_directory\" || return 1\n# gcloud components update\n# curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-463.0.0-linux-x86_64.tar.gz && tar -xf google-cloud-cli-463.0.0-linux-x86_64.tar.gz \n# # && ./google-cloud-sdk/install.sh\n"
+#     #     shell: bash
+#     # - run:
+#     #     name: gcloud
+#     #     command: which gcloud || true
+#     # resource_class: large
+
+# workflows:
+#   check-this-out:
+#     jobs:
+#       - image_push
+#     #       adb shell settings put global transition_animation_scale 0.0
+#     #       adb shell settings put global animator_duration_scale 0.0
+#     #     name: Disable emulator animations
+#     # # - run:
+#     # #     command: |
+#     # #       circle-android wait-for-boot
+#     # #     name: Wait for the emulator to start
+#     # - run:
+#     #     name: AVD reboot
+#     #     command: |
+#     #       # adb root
+#     #       # adb shell avbctl disable-verification
+#     #       adb reboot
+#     #       # sleep 30
+#     #       # adb root
+#     # # - android/wait-for-emulator
+#     # - run:
+#     #     name: ADB root
+#     #     command: adb root
+#     # - run:
+#     #     name: uninstall gcp
+#     #     command: "# Check the host platform\ncase \"$(uname -s)\" in\n  Linux*)     host=Linux;;\n  Darwin*)    host=Mac;;\n  CYGWIN*|MINGW32*|MSYS*|MINGW*) host=Windows;;\n  *)          host=\"UNKNOWN:${unameOut}\"\nesac\n\n# Set sudo to work whether logged in as root user or non-root user.\n# Remove sudo if the host is Windows\nif [ \"$host\" = \"Windows\" ]; then sudo=\"\"; \nelif [ \"$(id -u)\" -eq 0 ]; then sudo=\"\"; else sudo=\"sudo\"; fi\n\ndeclare installation_directory\ninstallation_directory=\"$(gcloud info --format='value(installation.sdk_root)')\"\n\ndeclare config_directory\nconfig_directory=\"$(gcloud info --format='value(config.paths.global_config_dir)')\"\n\n# shellcheck disable=SC2086 # $sudo is not a variable, it's a command.\n$sudo rm -rf \"$installation_directory\" || return 1\n\n# shellcheck disable=SC2086 # $sudo is not a variable, it's a command.\n$sudo rm -rf \"$config_directory\" || return 1\n# gcloud components update\n# curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-463.0.0-linux-x86_64.tar.gz && tar -xf google-cloud-cli-463.0.0-linux-x86_64.tar.gz \n# # && ./google-cloud-sdk/install.sh\n"
+#     #     shell: bash
+#     # - run:
+#     #     name: gcloud
+#     #     command: which gcloud || true
+#     # resource_class: large
+
+# workflows:
+#   check-this-out:
+#     jobs:
+#       - image_push
+#     #       adb shell settings put global transition_animation_scale 0.0
+#     #       adb shell settings put global animator_duration_scale 0.0
+#     #     name: Disable emulator animations
+#     # # - run:
+#     # #     command: |
+#     # #       circle-android wait-for-boot
+#     # #     name: Wait for the emulator to start
+#     # - run:
+#     #     name: AVD reboot
+#     #     command: |
+#     #       # adb root
+#     #       # adb shell avbctl disable-verification
+#     #       adb reboot
+#     #       # sleep 30
+#     #       # adb root
+#     # # - android/wait-for-emulator
+#     # - run:
+#     #     name: ADB root
+#     #     command: adb root
+#     # - run:
+#     #     name: uninstall gcp
+#     #     command: "# Check the host platform\ncase \"$(uname -s)\" in\n  Linux*)     host=Linux;;\n  Darwin*)    host=Mac;;\n  CYGWIN*|MINGW32*|MSYS*|MINGW*) host=Windows;;\n  *)          host=\"UNKNOWN:${unameOut}\"\nesac\n\n# Set sudo to work whether logged in as root user or non-root user.\n# Remove sudo if the host is Windows\nif [ \"$host\" = \"Windows\" ]; then sudo=\"\"; \nelif [ \"$(id -u)\" -eq 0 ]; then sudo=\"\"; else sudo=\"sudo\"; fi\n\ndeclare installation_directory\ninstallation_directory=\"$(gcloud info --format='value(installation.sdk_root)')\"\n\ndeclare config_directory\nconfig_directory=\"$(gcloud info --format='value(config.paths.global_config_dir)')\"\n\n# shellcheck disable=SC2086 # $sudo is not a variable, it's a command.\n$sudo rm -rf \"$installation_directory\" || return 1\n\n# shellcheck disable=SC2086 # $sudo is not a variable, it's a command.\n$sudo rm -rf \"$config_directory\" || return 1\n# gcloud components update\n# curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-463.0.0-linux-x86_64.tar.gz && tar -xf google-cloud-cli-463.0.0-linux-x86_64.tar.gz \n# # && ./google-cloud-sdk/install.sh\n"
+#     #     shell: bash
+#     # - run:
+#     #     name: gcloud
+#     #     command: which gcloud || true
+#     # resource_class: large
+
+# workflows:
+#   check-this-out:
+#     jobs:
+#       - image_push
+#     #       adb shell settings put global transition_animation_scale 0.0
+#     #       adb shell settings put global animator_duration_scale 0.0
+#     #     name: Disable emulator animations
+#     # # - run:
+#     # #     command: |
+#     # #       circle-android wait-for-boot
+#     # #     name: Wait for the emulator to start
+#     # - run:
+#     #     name: AVD reboot
+#     #     command: |
+#     #       # adb root
+#     #       # adb shell avbctl disable-verification
+#     #       adb reboot
+#     #       # sleep 30
+#     #       # adb root
+#     # # - android/wait-for-emulator
+#     # - run:
+#     #     name: ADB root
+#     #     command: adb root
+#     # - run:
+#     #     name: uninstall gcp
+#     #     command: "# Check the host platform\ncase \"$(uname -s)\" in\n  Linux*)     host=Linux;;\n  Darwin*)    host=Mac;;\n  CYGWIN*|MINGW32*|MSYS*|MINGW*) host=Windows;;\n  *)          host=\"UNKNOWN:${unameOut}\"\nesac\n\n# Set sudo to work whether logged in as root user or non-root user.\n# Remove sudo if the host is Windows\nif [ \"$host\" = \"Windows\" ]; then sudo=\"\"; \nelif [ \"$(id -u)\" -eq 0 ]; then sudo=\"\"; else sudo=\"sudo\"; fi\n\ndeclare installation_directory\ninstallation_directory=\"$(gcloud info --format='value(installation.sdk_root)')\"\n\ndeclare config_directory\nconfig_directory=\"$(gcloud info --format='value(config.paths.global_config_dir)')\"\n\n# shellcheck disable=SC2086 # $sudo is not a variable, it's a command.\n$sudo rm -rf \"$installation_directory\" || return 1\n\n# shellcheck disable=SC2086 # $sudo is not a variable, it's a command.\n$sudo rm -rf \"$config_directory\" || return 1\n# gcloud components update\n# curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-463.0.0-linux-x86_64.tar.gz && tar -xf google-cloud-cli-463.0.0-linux-x86_64.tar.gz \n# # && ./google-cloud-sdk/install.sh\n"
+#     #     shell: bash
+#     # - run:
+#     #     name: gcloud
+#     #     command: which gcloud || true
+#     # resource_class: large
+
+# workflows:
+#   check-this-out:
+#     jobs:
+#       - image_push
+
+# version: 2.1
+
+# orbs:
+#   katalon-studio: katalon/katalon-studio@23.0.11
+
+# parameters:
+#   envName:
+#     type: string
+#     default: "dev" 
+#   buildTestTags:
+#     type: string
+#     default: ""
+
+# workflows:
+#   build:
+#     jobs:
+#       - katalon-studio/run:
+#           version: "latest"
+
+#           command_arguments: '-retry=0 -statusDelay=15 -testSuitePath="Test Suites/P1" -browserType="mohan"'
+#       - store_artifacts:
+#           path: /tmp/artifacts
