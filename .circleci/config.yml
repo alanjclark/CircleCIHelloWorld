@@ -16,9 +16,9 @@ jobs:
           # # then
           #   if ! command python3 --version &> /dev/null;
           #   then
-              sudo sed -i "s/#\$nrconf{restart} = 'i';/\$nrconf{restart} = 'a';/g" /etc/needrestart/needrestart.conf
-              sudo apt-get update
-              sudo apt-get install python3.10 python3-pip -y
+              # sudo sed -i "s/#\$nrconf{restart} = 'i';/\$nrconf{restart} = 'a';/g" /etc/needrestart/needrestart.conf
+              sudo apt update
+              sudo apt install python3.10 python3-pip -y
               echo "python and pip installed"
             # else
             #   echo "python already installed"
