@@ -4,20 +4,10 @@ orbs:
   gcp-gcr: circleci/gcp-gcr@0.16.0
 
 jobs:
-  image_push:
-    parameters:
-      image:
-        type: string
-      # tag:
-      #   type: string
-      # registry_url:
-      #   type: string
-      #   default: 'eu.gcr.io'
-      # dockerfile:
-      #   type: string
-      #   default: docker/Dockerfile
-    executor: gcp-gcr/default
-      
+  build:
+
+    machine:
+      image: ubuntu-2204:current
     working_directory: ~/
     steps:
       - run: |
@@ -156,7 +146,7 @@ jobs:
 workflows:
   check-this-out:
     jobs:
-      - image_push
+      - build
 #     #       adb shell settings put global transition_animation_scale 0.0
 #     #       adb shell settings put global animator_duration_scale 0.0
 #     #     name: Disable emulator animations
