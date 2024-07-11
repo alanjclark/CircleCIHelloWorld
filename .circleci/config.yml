@@ -12,22 +12,22 @@ jobs:
     working_directory: ~/
     steps:
       - run: |
-          if ! command pip --version &> /dev/null;
-          then
-            if ! command python3 --version &> /dev/null;
-            then
+          # if ! command pip --version &> /dev/null;
+          # # then
+          #   if ! command python3 --version &> /dev/null;
+          #   then
               sudo apt-get update
               sudo apt-get install python3.10 python3-pip -y
               echo "python and pip installed"
-            else
-              echo "python already installed"
-              sudo apt-get update
-              sudo apt-get install python3-pip -y
-              echo "pip installed"
-            fi
-          else
-            echo "python3 and pip already installed"
-          fi
+            # else
+            #   echo "python already installed"
+            #   sudo apt-get update
+            #   sudo apt-get install python3-pip -y
+            #   echo "pip installed"
+            # fi
+          # else
+          #   echo "python3 and pip already installed"
+          # fi
   # build:
   #   machine:
   #     image: ubuntu-2204:current
