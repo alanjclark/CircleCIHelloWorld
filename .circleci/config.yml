@@ -11,27 +11,12 @@ jobs:
     steps:
       - run:
           name: Multiline Test 1
-          command: >
-            echo foo
-              bar
-              baz
-          when: always
-      - run:
-          name: Multiline Test 2
-          command: >
-            echo foo
-            bar
-            baz
-          when: always
-      - run:
-          name: Multiline Test 3
-          command: |
-            echo foo \
-            bar \
-            baz
-          when: always
+          command: echo order
 
 workflows:
   main-workflow:
     jobs:
-      - build 
+      - build:
+          contexts:
+            - first
+            - second
