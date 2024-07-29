@@ -5,13 +5,13 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: cimg/openjdk:19.0.2
-    resource_class: small
+      - image: cimg/node:current
+    resource_class: medium
 
     steps:
       - run:
-          name: Multiline Test 1
-          command: echo $ORDER
+          name: install stuff
+          command: npm ci --verbose
 
 workflows:
   main-workflow:
