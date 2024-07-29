@@ -11,7 +11,7 @@ jobs:
     steps:
       - run:
           name: Multiline Test 1
-          command: echo order
+          command: echo $ORDER
 
 workflows:
   main-workflow:
