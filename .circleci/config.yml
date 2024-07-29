@@ -1,6 +1,7 @@
 version: 2.1
-# orbs:
-#   jq: circleci/jq@2.2.0
+
+orbs:
+  node: circleci/node@5.2.0
 
 jobs:
   build:
@@ -9,9 +10,7 @@ jobs:
     resource_class: medium
 
     steps:
-      - run:
-          name: install stuff
-          command: npm ci --verbose
+      - node/install-packages
 
 workflows:
   main-workflow:
