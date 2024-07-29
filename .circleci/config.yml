@@ -17,6 +17,6 @@ workflows:
   main-workflow:
     jobs:
       - build:
-          contexts:
-            - second
+          context:
             - first
+            - second
