@@ -16,8 +16,6 @@
   "dependencies": {
     "@bull-board/express": "^5.20.2",
     "@bull-monitor/express": "^5.4.0",
-    "@ramaniengineering/schema-registry-dev": "^18.18.0",
-    "@ramaniengineering/schema-registry-production": "^16.0.0",
     "@sentry/node": "^8.7.0",
     "@sentry/tracing": "^7.114.0",
     "airtable": "^0.12.2",
