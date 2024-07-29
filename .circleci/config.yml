@@ -18,5 +18,6 @@ workflows:
     jobs:
       - build:
           context:
-            - first
             - second
+            - first
+
