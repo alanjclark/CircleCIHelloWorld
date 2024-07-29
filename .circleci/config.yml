@@ -1,116 +1,37 @@
 version: 2.1
-orbs:
-  jq: circleci/jq@2.2.0
+# orbs:
+#   jq: circleci/jq@2.2.0
 
-parameters:
-  envName:
-    type: string
-    default: "dev" 
-  buildTestTags:
-    type: string
-    default: ""
-  TriggerBranch:
-    type: string
-    default: "main"
-  TriggerFlow:
-    type: string
-    default: "SFOMSOrderPlacement"
-
-working_directory: ~/project
 jobs:
   build:
     docker:
       - image: cimg/openjdk:19.0.2
-    resource_class: medium
+    resource_class: small
 
     steps:
-      - run: pgrep circleci | while read line ; do echo "$(date +"%T") > $line" ; done ;
-      - jq/install
-      - checkout  # Performs code checkout
-      # - run:
-      #     name: Fetch SFCC sandbox URL
-      #     command: |
-      #       ls -lrt /home/circleci/project
-      #       cd /home/circleci/project/scripts
-      #       # Run the shell script to fetch the SFCC sandbox URL based on the environment name and type
-      #       SANDBOX_URL=$(bash fetch_sfcc_sandbox_url.sh <<pipeline.parameters.envName>>)
-      #       echo "Fetched Sandbox URL: $SANDBOX_URL"
-      #       echo "export SANDBOX_URL=$SANDBOX_URL" >> $BASH_ENV
-
       - run:
-          name: Trigger QA Repository
+          name: Multiline Test 1
+          command: >
+            echo foo
+              bar
+              baz
+          when: always
+      - run:
+          name: Multiline Test 2
+          command: >
+            echo foo
+            bar
+            baz
+          when: always
+      - run:
+          name: Multiline Test 3
           command: |
-            shopt -s nocasematch
-            set -x 
-            # if [[ "<<pipeline.parameters.TriggerFlow>>" == "CreateOrder" ]]; then
-            #   API_ENDPOINT="https://circleci.com/api/v2/project/gh/saks-com/Order_Placement_Scenarios/pipeline"
-            # elif [[ "<<pipeline.parameters.TriggerFlow>>" == "QaBuild" ]]; then
-            #   API_ENDPOINT="https://circleci.com/api/v2/project/gh/saks-com/CX_Automation_QA_Stage_Payment/pipeline"
-            if [[ "<<pipeline.parameters.TriggerFlow>>" == "SFOMSOrderPlacement" ]]; then
-              API_ENDPOINT="https://circleci.com/api/v2/project/gh/alanjclark/circleci-test/pipeline"
-            else
-              echo "Invalid value for triggerflow parameter"
-            exit 1
-            fi
-            echo $API_ENDPOINT
-            
-            shopt -s nocasematch
-
-            PIPELINE_ID=$(curl -X POST \
-                              "$API_ENDPOINT" \
-                              -H 'Content-Type: application/json' \
-                              -H "Circle-Token: $CIRCLE_TOKEN" \
-                              -d '{
-                                "parameters": {
-                                  "envName": "<<pipeline.parameters.envName>>",
-                                  "buildTestTags": "<<pipeline.parameters.buildTestTags>>"
-                                },
-                                "branch": "<<pipeline.parameters.TriggerBranch>>",
-                                "TriggerFlow": "<<pipeline.parameters.TriggerFlow>>",
-                                "trigger": true
-                               }' | jq -r .'id' \
-                          )
-
-            echo "Status of target_circleci_pipeline = $PIPELINE_ID"
-            echo "export PIPELINE='$PIPELINE_ID' " >> $BASH_ENV
-
-
-      # - run:
-      #     name : Checking status of QA build
-      #     command: |
-      #       pipelineInfo=$(curl --fail-with-body --no-progress-meter "https://circleci.com/api/v2/pipeline/$PIPELINE/workflow?circle-token=$circle_token")
-      #       echo "Pipeline info: $pipelineInfo"
-      #       STATUS=$(curl --fail-with-body --no-progress-meter "https://circleci.com/api/v2/pipeline/$PIPELINE/workflow?circle-token=$circle_token" | jq -r '.items[].status')
-      #       echo "status = $STATUS"
-
-      #       SECONDS=0
-      #       allWorkflowsFinished="false"
-      #       while [[ "$allWorkflowsFinished" == "false" ]]; do
-      #         sleep 10
-      #         workflows=$(curl --fail-with-body --no-progress-meter \
-      #           --url "https://circleci.com/api/v2/pipeline/$PIPELINE/workflow" \
-      #           --header "Circle-Token: $circle_token" \
-      #           )
-      #         statuses=$(jq '[.items[].status] | join(" ")' \<<<"$workflows")
-      #         echo "Workflow statuses: $statuses"
-      #         allWorkflowsFinished=$(jq 'any(.items[]; .status == "running" or .status == "failing" or .status == "on_hold") | not' \<<<"$workflows")
-      #         allWorkflowsSucceeded=$(jq 'all(.items[]; .status == "success" or .status == "not_run")' \<<<"$workflows")
-      #         echo "[$SECONDS] All workflows finished: $allWorkflowsFinished, succeeded: $allWorkflowsSucceeded"
-      #       done
-
-      #       echo "finally done, checking final status: $statuses"
-
-      #       if [[ $allWorkflowsSucceeded == "true" ]]
-      #       then
-      #         echo "Proceeding with build, as triggered pipeline was success"
-      #         exit 0
-      #       else
-      #         echo "Stopping build, triggered pipeline was not a success"
-      #         exit 1
-      #       fi
+            echo foo \
+            bar \
+            baz
+          when: always
 
 workflows:
-  version: 2
   main-workflow:
     jobs:
       - build 
