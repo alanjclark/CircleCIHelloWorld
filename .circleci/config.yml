@@ -25,11 +25,12 @@ jobs:
       - run:
           name: Wait for postgres to start
           command: |
-            for i in `seq 1 5`;
+            set -x
+            for i in `seq 1 10`;
             do
               nc -z localhost 5432 && echo Success && exit 0
               echo -n .
-              sleep 5
+              sleep 1
             done
             echo Failed waiting for Postgres && exit 1
       - run:
