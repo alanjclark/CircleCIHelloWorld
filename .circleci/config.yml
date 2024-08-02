@@ -15,21 +15,21 @@ jobs:
           name: Create network
           command: |
             docker network create mynetwork
-            docker run --network=mynetwork -p 5431:5431 -d postgres
+            # docker run --network=mynetwork -p 5431:5431 -d postgres
           background: true
       - run:
           name: Start container
-          command: docker run --network=mynetwork -p 5431:5431 -e "POSTGRES_PASSWORD=password" --name postgres-container postgres:15-alpine
+          command: docker run --network=mynetwork -p 5432:5432 -e "POSTGRES_PASSWORD=password" --name postgres-container postgres:15-alpine
           background: true
       - run:
           name: Start container and run curl
-          command: docker run --network=mynetwork -it appropriate/curl curl postgres-container:5431
+          command: docker run --network=mynetwork -it appropriate/curl curl postgres-container:5432
       # - run:
       #     name: Start postgres docker container
       #     command: docker run -p 5432:5432 -e "POSTGRES_PASSWORD=password" postgres:15-alpine
       #     background: true
       # # - run: curl remote-docker:5432
-      - run: psql postgres://postgres:password@remote-docker:5431/postgres
+      - run: psql postgres://postgres:password@remote-docker:5432/postgres
 
     # steps:
       # - checkout
