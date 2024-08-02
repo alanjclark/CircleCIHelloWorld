@@ -15,8 +15,8 @@ jobs:
           name: Start postgres docker container
           command: docker run -p 5432:5432 -e "POSTGRES_PASSWORD=password" postgres:15-alpine
           background: true
-      - run: curl remote_docker:5432
-      - run: psql postgres://postgres:password@remote_docker:5432/postgres
+      - run: curl remote-docker:5432
+      - run: psql postgres://postgres:password@remote-docker:5432/postgres
 
     # steps:
       # - checkout
