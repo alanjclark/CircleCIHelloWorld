@@ -19,12 +19,15 @@ jobs:
           background: true
       - run:
           name: Start container
-          command: docker run --network=mynetwork -it appropriate/curl curl service-container-name:5432
+          command: docker run --network=mynetwork -p 5432:5432 -e "POSTGRES_PASSWORD=password" --name postgres-container postgres:15-alpine
       - run:
-          name: Start postgres docker container
-          command: docker run -p 5432:5432 -e "POSTGRES_PASSWORD=password" postgres:15-alpine
-          background: true
-      - run: curl remote-docker:5432
+          name: Start container and run curl
+          command: docker run --network=mynetwork -it appropriate/curl curl postgres-container:5432
+      # - run:
+      #     name: Start postgres docker container
+      #     command: docker run -p 5432:5432 -e "POSTGRES_PASSWORD=password" postgres:15-alpine
+      #     background: true
+      # # - run: curl remote-docker:5432
       - run: psql postgres://postgres:password@remote-docker:5432/postgres
 
     # steps:
