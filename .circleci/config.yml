@@ -12,8 +12,8 @@ jobs:
           POSTGRES_USER: postgres
           # POSTGRES_PASSWORD: password
     steps:
-      - run:
-          name: Start postgres
+      # - run:
+      #     name: Start postgres
           # command: |
           #   docker run -p 5432:5432 -e "POSTGRES_PASSWORD=password" postgres:15-alpine
           #   sleep 5
