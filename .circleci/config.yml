@@ -15,7 +15,7 @@ jobs:
       - run: curl remote_docker:5432
       - run: psql postgres://postgres:password@remote_docker:5432/postgres
 
-    steps:
+    # steps:
       # - checkout
       # - node/install-packages
 
