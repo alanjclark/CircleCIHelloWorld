@@ -21,8 +21,17 @@ jobs:
           name: Start container
           command: |
             docker run --network=mynetwork -p 5432:5432 -e "POSTGRES_PASSWORD=password" --name postgres-container postgres:15-alpine
-            sleep 5
           background: true
+      - run:
+          name: Wait for postgres to start
+          command: |
+            for i in `seq 1 5`;
+            do
+              nc -z localhost 5432 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for Postgres && exit 1
       - run:
           name: Start container and run curl
           command: docker run --network=mynetwork -it appropriate/curl curl postgres-container:5432
