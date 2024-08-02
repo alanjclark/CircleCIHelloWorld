@@ -29,7 +29,7 @@ jobs:
             do
               nc -z localhost 5432 && echo Success && exit 0
               echo -n .
-              sleep 1
+              sleep 5
             done
             echo Failed waiting for Postgres && exit 1
       - run:
