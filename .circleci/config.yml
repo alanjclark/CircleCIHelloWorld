@@ -12,6 +12,15 @@ jobs:
           # docker_layer_caching: true
       # - run: DOCKER_IP=$(curl --retry 3 --silent --fail --show-error http://169.254.169.254/latest/meta-data/local-ipv4)
       - run:
+          name: Create network
+          command: |
+            docker network create mynetwork
+            docker run --network=mynetwork -p 5432:5432 -d postgres
+          background: true
+      - run:
+          name: Start container
+          command: docker run --network=mynetwork -it appropriate/curl curl service-container-name:5432
+      - run:
           name: Start postgres docker container
           command: docker run -p 5432:5432 -e "POSTGRES_PASSWORD=password" postgres:15-alpine
           background: true
