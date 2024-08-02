@@ -6,36 +6,47 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/base:current
+      - image: postgres:15-alpine
     steps:
-      - setup_remote_docker
+      - run:
+          name: Start postgres
+          command: |
+            docker run -p 5432:5432 -e "POSTGRES_PASSWORD=password" postgres:15-alpine
+            sleep 5
+          background: true
+      - run:
+          name: curl localhost:5432
+          command: curl localhost:5432
+      - run: psql postgres://postgres:password@localhost:5432/postgres
+      # - setup_remote_docker
           # docker_layer_caching: true
       # - run: DOCKER_IP=$(curl --retry 3 --silent --fail --show-error http://169.254.169.254/latest/meta-data/local-ipv4)
-      - run:
-          name: Create network
-          command: |
-            docker network create mynetwork
-            # docker run --network=mynetwork -p 5431:5431 -d postgres
-          background: true
-      - run:
-          name: Start container
-          command: |
-            docker run --network=mynetwork -p 5432:5432 -e "POSTGRES_PASSWORD=password" --name postgres-container postgres:15-alpine
-          background: true
-      - run:
-          name: Wait for postgres to start
-          command: |
-            set -x
-            for i in `seq 1 10`;
-            do
-              nc -z localhost 5432 && echo Success && exit 0
-              echo -n .
-              sleep 1
-            done
-            echo Failed waiting for Postgres && exit 1
-      - run:
-          name: Start container and run curl
-          command: docker run --network=mynetwork -it appropriate/curl curl postgres-container:5432
+      # - run:
+      #     name: Create network
+      #     command: |
+      #       docker network create mynetwork
+      #       # docker run --network=mynetwork -p 5431:5431 -d postgres
+      #     background: true
+      # - run:
+      #     name: Start container
+      #     command: |
+      #       docker run --network=mynetwork -p 5432:5432 -e "POSTGRES_PASSWORD=password" --name postgres-container postgres:15-alpine
+      #     background: true
+      # - run:
+      #     name: Wait for postgres to start
+      #     command: |
+      #       set -x
+      #       for i in `seq 1 10`;
+      #       do
+      #         nc -z localhost 5432 && echo Success && exit 0
+      #         echo -n .
+      #         sleep 1
+      #       done
+      #       echo Failed waiting for Postgres && exit 1
+      # - run:
+      #     name: Start container and run curl
+      #     command: docker run --network=mynetwork -it appropriate/curl curl postgres-container:5432
       # - run:
       #     name: Start postgres docker container
       #     command: docker run -p 5432:5432 -e "POSTGRES_PASSWORD=password" postgres:15-alpine
