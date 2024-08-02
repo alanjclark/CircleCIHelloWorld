@@ -7,10 +7,14 @@ jobs:
   build:
     docker:
       - image: cimg/base:current
-      - image: postgres:15-alpine
+      - image: cimg/postgres:15
         environment:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
+      # - image: postgres:15-alpine
+      #   environment:
+      #     POSTGRES_USER: postgres
+      #     POSTGRES_PASSWORD: password
     steps:
       # - run:
       #     name: Start postgres
