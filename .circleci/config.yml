@@ -19,7 +19,9 @@ jobs:
           background: true
       - run:
           name: Start container
-          command: docker run --network=mynetwork -p 5432:5432 -e "POSTGRES_PASSWORD=password" --name postgres-container postgres:15-alpine
+          command: |
+            docker run --network=mynetwork -p 5432:5432 -e "POSTGRES_PASSWORD=password" --name postgres-container postgres:15-alpine
+            sleep 5
           background: true
       - run:
           name: Start container and run curl
