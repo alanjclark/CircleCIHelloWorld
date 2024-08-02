@@ -13,8 +13,8 @@ jobs:
           POSTGRES_PASSWORD: password
     steps:
       - run:
-          name: curl localhost:5432
-          command: sleep 5 && curl localhost:5432
+          name: Wait
+          command: sleep 5
       - run: psql postgres://postgres:password@localhost:5432/postgres
 
 workflows:
